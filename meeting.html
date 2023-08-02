@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Reminder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="d">
+
+        <div class="div2">
+            <h1>MEETING REMINDER</h1>
+            <input type="text" placeholder=" Enter the name">
+            <input type="date">
+            <input type="time">
+
+            <button class="btn">Add</button>
+            <button class="btn">Update</button>
+            <button class="btn">Clear</button>
+
+
+            <ul></ul>
+
+        </div>
+
+        <audio
+            src="./Simple Short ringtone  Instrumental ringtone  Mobile ringtone   new ringtone  Romantic ringtone.mp3"></audio>
+
+    </div>
+
+
+    <script>
+
+        var inp = document.querySelectorAll('input')[0]
+        var inp1 = document.querySelectorAll('input')[1]
+        var inp2 = document.querySelectorAll('input')[2]
+
+        var btnAdd = document.querySelectorAll("button")[0]
+        var btnUpdate = document.querySelectorAll('button')[1]
+        var btnclear = document.querySelectorAll('button')[2]
+        var ul = document.querySelector('ul')
+
+        var audio = document.querySelector('audio')
+
+        btnAdd.addEventListener('click', () => {
+
+            if (inp.value != '') {
+                var data = localStorage.getItem('data')
+            }
+            if (data) {
+                var cc = JSON.parse(data)
+                // var con=JSON.parse(data)
+                // con.push(inp.value)
+                // localStorage.setItem('data',JSON.stringify(con))
+                // show()
+
+                var obj = { name: `${inp.value}`, time: `${inp1.value}`, date: `${inp2.value}` }
+                cc.push(obj)
+
+                localStorage.setItem('data', JSON.stringify(cc))
+                show()
+            }
+            else {
+                var obj = { name: `${inp.value}`, time: `${inp1.value}`, date: `${inp2.value}` }
+
+                localStorage.setItem('data', JSON.stringify([obj]))
+                inp.value = ""
+                show()
+            }
+        })
+        function show() {
+            ul.innerHTML = ""
+            var data = JSON.parse(localStorage.getItem('data'))
+
+            if (data) {
+                data.forEach((ele, index) => {
+                    var li = document.createElement('li')
+                    li.innerHTML = `<p>${ele.name} ${inp1.value} ${inp2.value} <button onclick=handleEdit(${index})>Edit</button><button onclick=handleDel(${index})>del</button> </p>`
+                    ul.appendChild(li)
+
+                });
+            }
+        }
+
+        var myindex = -1
+        function handleEdit(index) {
+
+            var data = JSON.parse(localStorage.getItem('data'))
+            inp.value = data[index].name
+            myindex = index;
+        }
+
+        function handleDel(index) {
+            var data = JSON.parse(localStorage.getItem('data'))
+            data.splice(index, 1)
+            localStorage.setItem("data", JSON.stringify(data))
+            show()
+        }
+
+        btnUpdate.addEventListener('click', () => {
+
+            var data = JSON.parse(localStorage.getItem('data'))
+            data[myindex].name = inp.value
+            localStorage.setItem('data', JSON.stringify(data))
+            show()
+            inp.value = ""
+        })
+
+        btnclear.addEventListener('click', () => {
+            localStorage.clear()
+            show()
+        })
+
+        setInterval(() => {
+            var dataa = JSON.parse(localStorage.getItem('data'))
+            if (dataa) {
+                dataa.forEach((ele, index) => {
+                    var date = new Date()
+                    var hour = date.getHours()
+                    var mint = date.getMinutes()
+
+                    var cmTime = `${hour}:${mint}`
+                    // console.log(cmTime,ele.date);
+                    if (cmTime == ele.date) {
+                        audio.play()
+                    }
+                })
+            }
+        }, 1000)
+
+    </script>
+
+</body>
+
+</html>
